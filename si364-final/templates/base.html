@@ -5,10 +5,17 @@
 
 {% block navigation %}
 <ul>
-    <li><a href="{{ url_for('index') }}">Search for articles by keyword.</a>
+    <li><a href="{{ url_for('index') }}">Search for articles by keyword.</a></li>
     <li><a href="{{ url_for('all_lists') }}">See all past searches.</a></li>
-    <li><a href="{{ url_for('login') }}">Log in to an existing account.</a>
+    <br>
+    <li><a href="{{ url_for('top_stories') }}">See top stories on NYT.</a></li>
+    <br>
+    <br>
+    <li><a href="{{ url_for('login') }}">Log in to an existing account.</a></li>
     <li><a href="{{ url_for('register') }}">Register for a new account.</a></li>
+    <br>
+    <li><a href="{{ url_for('create_collection') }}">Click here to create a new personal collection (Psstt.. It's a secret.)</a></li>
+    <li><a href="{{ url_for('collections') }}">Click here to view all your existing collections.</a></li>
     <li><a href="{{ url_for('secret') }}">Click here if you're logged in!! (Psstt.. It's a secret.)</a></li>
 </ul>
 <p>--------</p><br>
@@ -17,13 +24,14 @@
 
 
 {% block content %}
-
 <br/>
 <form action="" method="POST">
     {{ form.hidden_tag() }}
     {{ form.term.label }} {{ form.term() }}<br>
     {{ form.submit() }}<br>
 </form>
+<br>
+<li><a href="{{ url_for('all_lists') }}">See all past searches.</a></li>
 {% endblock %}
 
 

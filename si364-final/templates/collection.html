@@ -1,24 +1,21 @@
+<h1>{{ collection.name }}</h1>
 {% extends 'base.html' %}
 
 {% block navigation %}
-    {{ super() }}
+ {{ super() }}
 {% endblock %}
 
 
 {% block content %}
-<h3> {{ term }} </h3>
-
-
 
 <ul>
-{% for l in items %}
+{% for art in articles %}
     <li>
         <a href="{{ url_for('one_article', headline=l.headline)}}"> {{ l.headline }}</a>
     </li>
     <br>
 {% endfor %}
 </ul>
-
 
 
 

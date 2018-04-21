@@ -1,0 +1,28 @@
+<h1>My collections</h1>
+
+{% extends 'base.html' %}
+
+{% block navigation %}
+ {{ super() }}
+{% endblock %}
+
+
+{% block content %}
+
+{% if not collections %}
+There are no personal collections to show.
+{% else %}
+
+<ul>
+{% for l in collections %}
+    <li>
+        <a href="{{ url_for('single_collection',title=l.title)}}"> {{ l.title}}</a>
+    </li>
+{% endfor %}
+</ul>
+
+
+{% endif %}
+
+
+{% endblock %}

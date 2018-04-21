@@ -1,0 +1,17 @@
+<h1>Create a new article collection</h1>
+{% extends 'base.html' %}
+
+{% block navigation %}
+ {{ super() }}
+{% endblock %}
+
+{% block content %}
+
+<form action="" method="POST">
+	{{ form.hidden_tag() }}
+	{{ form.name.label }} {{ form.name() }}
+	{{ form.term.label }} {{ form.term() }}
+	{{ form.submit() }}
+</form>
+
+{% endblock %}
