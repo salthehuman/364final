@@ -160,6 +160,11 @@ class ToSearchForm(FlaskForm):
     term = StringField("What keyword would you like to search?", validators=[Required()])
     submit = SubmitField("Submit")
 
+class CollectionCreateForm(FlaskForm):
+    name = StringField("What would you like to name this collection?", validators=[Required()])
+    term = StringField("What keyword would you like to search?", validators=[Required()])
+    submit = SubmitField('Delete')
+
 class DeleteSearchQueryForm(FlaskForm):
     submit = SubmitField('Delete')
 
@@ -174,6 +179,21 @@ def nytSearch(q):
     url = "https://api.nytimes.com/svc/search/v2/articlesearch.json"
     data = requests.get(url, params={'api-key':key, 'q':q}).json()
     return data
+
+def nytTop():
+    key = NYT_key
+    articles = []
+    url = "https://api.nytimes.com/svc/topstories/v2/home.json"
+    data = requests.get(url, params={'api-key':key}).json()
+    for article in data['results']:
+        section = article['section']
+        title = article['title']
+        summary = article['abstract']
+        author = article['byline']
+        date = article['published_date']
+        article_dic = {'title':title, 'byline':author, 'published_date': date, 'summary':summary}
+        articles.append(article_dic)
+    return articles
 
 def get_or_create_article(headline, author, summary, date):
     article = ArticleOnList.query.filter_by(headline=headline).first()
@@ -197,6 +217,22 @@ def get_or_create_search_query(term):
             date = x['pub_date']
             final = get_or_create_article(headline=title, author=author, summary=summary, date=date)
             lst.articles.append(final)
+        db.session.add(lst)
+        db.session.commit()
+    return lst
+
+def get_or_create_personal_collection(name, term, user_id):
+    lst = PersonalArticleCollection.query.filter_by(title=name).first()
+    if not lst:
+        lst = PersonalArticleCollection(title=name, user_id=user_id)
+        search = nytSearch(term)['response']['docs']
+        for x in search:
+            title = x['headline']['main']
+            author = x['byline']['original']
+            summary = x['snippet']
+            date = x['pub_date']
+            final = get_or_create_article(headline=title, author=author, summary=summary, date=date)
+            lst.items.append(final)
         db.session.add(lst)
         db.session.commit()
     return lst
@@ -271,6 +307,18 @@ def all_lists():
     lsts = SearchQuery.query.all()
     return render_template('all_lists.html',lists=lsts, form=form)
 
+@app.route('/top_stories', methods =["GET", "POST"])
+def top_stories():
+    items =[]
+    data = nytTop()
+    for x in data:
+        author = x['byline']
+        date = x['published_date']
+        title = x['title']
+        summary = x['summary']
+        art = get_or_create_article(author=author, date=date, headline=title, summary=summary)
+        items.append(art)
+    return render_template('top_stories.html', items=items)
 
 @app.route('/list/<term>',methods=["GET","POST"])
 def one_list(term):
@@ -295,6 +343,34 @@ def delete_list(lst):
     db.session.commit()
     flash("Delete list " + str(lst))
     return redirect(url_for("all_lists"))
+
+
+@app.route('/create_collection',methods=["GET","POST"])
+@login_required
+def create_collection():
+    form = CollectionCreateForm()
+    if request.method == 'POST':
+        name = form.name.data
+        query = form.term.data
+        current_user = session['user_id']
+        x = get_or_create_personal_collection(name=name, term=query, user_id=current_user)
+        collections = PersonalArticleCollection.query.filter_by(user_id=current_user)
+        return redirect(url_for('collections', collections=collections))
+    return render_template('create_collection.html', form=form)
+
+@app.route('/collections',methods=["GET","POST"])
+@login_required
+def collections():
+    user_id = session['user_id']
+    collections = PersonalArticleCollection.query.filter_by(user_id=current_user.id).all()
+    return render_template('collections.html', collections=collections)
+
+
+@app.route('/collection/<title>')
+def single_collection(title):
+    collection = PersonalArticleCollection.query.filter_by(title=title).first()
+    art = collection.items.all()
+    return render_template('collection.html',collection=art)
 
 
 if __name__ == '__main__':
