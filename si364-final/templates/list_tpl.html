@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block navigation %}
+    {{ super() }}
+{% endblock %}
+
+
+{% block content %}
+<h3> {{ term }} </h3>
+
+
+
+<ul>
+{% for l in items %}
+    <li>
+        <a href="{{ url_for('one_article', headline=l.headline)}}"> {{ l.headline }}</a>
+    </li>
+    <br>
+{% endfor %}
+</ul>
+
+
+
+
+
+{% if not items %}
+There are no articles show.
+{% endif %}
+
+
+<div>
+{% for message in get_flashed_messages() %}
+<strong>*** {{ message }} ***</strong>
+{% endfor %}
+</div>
+
+{% endblock %}

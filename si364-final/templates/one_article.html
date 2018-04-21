@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block navigation %}
+    {{ super() }}
+{% endblock %}
+
+
+{% block content %}
+<h3> {{ headline }} </h3>
+<p> An article by {{ author }} </p>
+<p> Released on {{ date }} </p>
+<br>
+<p> Summary: {{ summary }} </p>
+<br>
+
+
+<div>
+{% for message in get_flashed_messages() %}
+<strong>*** {{ message }} ***</strong>
+{% endfor %}
+</div>
+
+{% endblock %}

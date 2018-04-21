@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block navigation %}
+    {{ super() }}
+{% endblock %}
+
+
+{% block content %}
+
+{% if not lists %}
+There are no lists to show.
+
+{% else %}
+
+<ul>
+{% for l in lists %}
+    <li>
+        <a href="{{ url_for('one_list',term=l.term)}}"> {{ l.term }}</a>
+        <form = method="POST" action="/delete/{{  l.term }}">
+        	{{  form.hidden_tag()  }}
+        	{{  form.submit()  }}
+        </form>
+    </li>
+{% endfor %}
+</ul>
+
+
+
+</ul>
+{% endif %}
+
+
+{% endblock %}

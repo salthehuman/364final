@@ -1,0 +1,29 @@
+<h2>Salvatore DiGioia's Final Project -- Si 364</h2>
+<h3>A New York Times Search Application</h3>
+<br>
+<h3>Navigation</h3>
+
+{% block navigation %}
+<ul>
+    <li><a href="{{ url_for('index') }}">Search for articles by keyword.</a>
+    <li><a href="{{ url_for('all_lists') }}">See all past searches.</a></li>
+    <li><a href="{{ url_for('login') }}">Log in to an existing account.</a>
+    <li><a href="{{ url_for('register') }}">Register for a new account.</a></li>
+    <li><a href="{{ url_for('secret') }}">Click here if you're logged in!! (Psstt.. It's a secret.)</a></li>
+</ul>
+<p>--------</p><br>
+{% endblock %}
+
+
+
+{% block content %}
+
+<br/>
+<form action="" method="POST">
+    {{ form.hidden_tag() }}
+    {{ form.term.label }} {{ form.term() }}<br>
+    {{ form.submit() }}<br>
+</form>
+{% endblock %}
+
+
